@@ -39,9 +39,9 @@ class DataboxTestOne extends Command
     {
         //
 
-        $c = new  \Databox\Client('1zbcmbkz2xq8w4cgswko40o0wg0ccso8');
+        $c = new  \Databox\Client('780dfada91d74e4dad86cd5d63fec563');
         
-        $ok = $c->push('baki metrik', 110, null, null, 'MKD');
+        $ok = $c->push('screenPageViews', 789, null, null, 'times');
         if ($ok) {
             echo 'Inserted,...';
         }

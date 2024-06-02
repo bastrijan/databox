@@ -30,4 +30,14 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    //add google credentials
+    'google' => [
+        'credentials' => env('GOOGLE_APPLICATION_CREDENTIALS'),
+    ],
+
+    // config/services.php
+    'databox' => [
+        'api_key' => env('DATABOX_API_KEY'),
+    ],
+
 ];
