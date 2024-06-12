@@ -1,6 +1,5 @@
 <?php
 
-// app/Console/Commands/FetchAndPushMetrics.php
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
@@ -8,9 +7,9 @@ use App\Services\GoogleAnalyticsService;
 use App\Services\DataboxService;
 use Illuminate\Support\Facades\Log;
 
-class FetchAndPushMetrics extends Command
+class MetricsGoogleAnalytics extends Command
 {
-    protected $signature = 'metrics:fetch-and-push';
+    protected $signature = 'metrics:ga-fetch-and-push';
     protected $description = 'Fetch metrics from Google Analytics 4 and push them to Databox';
 
     private $googleAnalyticsService;
