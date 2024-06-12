@@ -5,6 +5,8 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Services\FirebaseCloudMessagingService;
 use App\Services\DataboxService;
+use Google\Cloud\BigQuery\BigQueryClient;
+use Kreait\Firebase\Factory;
 use Illuminate\Support\Facades\Log;
 
 
@@ -41,6 +43,7 @@ class MetricsFirebaseCloudMessaging extends Command
      */
     public function handle()
     {
-        //
+        $metrics = $this->firebaseCloudMessagingService->getMetrics();
+        $this->info(json_encode($metrics, JSON_PRETTY_PRINT));
     }
 }

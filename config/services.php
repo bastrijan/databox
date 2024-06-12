@@ -30,9 +30,14 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
-    //add google credentials
+    //add Google Analytics 4 credentials
     'google' => [
         'credentials' => env('GOOGLE_APPLICATION_CREDENTIALS'),
+    ],
+
+    //add FCM credentials
+    'fcm' => [
+        'credentials' => env('FIREBASE_CREDENTIALS'),
     ],
 
     // config/services.php

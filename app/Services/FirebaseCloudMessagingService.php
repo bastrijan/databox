@@ -1,44 +1,62 @@
 <?php
-// app/Services/GoogleAnalyticsService.php
+
 namespace App\Services;
 
-use Google\Client;
-use Google\Service\AnalyticsData;
+use GuzzleHttp\Client;
 
 class FirebaseCloudMessagingService
 {
-    private $analyticsData;
+    protected $client;
+    protected $apiUrl = 'https://fcm.googleapis.com/fcm/send';
 
     public function __construct()
     {
-        $client = new Client();
-        $client->setAuthConfig(config('services.google.credentials'));
-        $client->addScope('https://www.googleapis.com/auth/analytics.readonly');
-        $this->analyticsData = new AnalyticsData($client);
+        $this->client = new Client([
+            'base_uri' => $this->apiUrl,
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . $this->getAccessToken(),
+            ]
+        ]);
     }
 
-    public function getMetrics($propertyId, $startDate, $endDate)
+    protected function getAccessToken()
     {
-        $request = new \Google\Service\AnalyticsData\RunReportRequest();
-        $request->setDateRanges([
-            new \Google\Service\AnalyticsData\DateRange(['startDate' => $startDate, 'endDate' => $endDate])
-        ]);
-        $request->setMetrics([
-            new \Google\Service\AnalyticsData\Metric(['name' => 'activeUsers']),
-            new \Google\Service\AnalyticsData\Metric(['name' => 'screenPageViews'])
-        ]);
-        $request->setDimensions([
-            new \Google\Service\AnalyticsData\Dimension(['name' => 'pageTitle'])
+        // Load the service account key JSON file
+        $serviceAccount = json_decode(file_get_contents(config('services.databox.credentials')), true);
+
+        // Get the access token using JWT
+        $now = time();
+        $exp = $now + 3600; // Token valid for 1 hour
+        $payload = [
+            'iss' => $serviceAccount['client_email'],
+            'sub' => $serviceAccount['client_email'],
+            'aud' => 'https://oauth2.googleapis.com/token',
+            'iat' => $now,
+            'exp' => $exp,
+            'scope' => 'https://www.googleapis.com/auth/cloud-platform'
+        ];
+
+        $jwt = \Firebase\JWT\JWT::encode($payload, $serviceAccount['private_key'], 'RS256');
+
+        $client = new Client();
+        $response = $client->post('https://oauth2.googleapis.com/token', [
+            'form_params' => [
+                'grant_type' => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+                'assertion' => $jwt,
+            ]
         ]);
 
-        try {
-            $response = $this->analyticsData->properties->runReport('properties/' . $propertyId, $request);
-            return $response->getRows();
-        } catch (\Exception $e) {
-            // Log the error for debugging
-            \Log::error('Google Analytics API error: ' . $e->getMessage());
-            return [];
-        }
+        $data = json_decode($response->getBody()->getContents(), true);
+
+        return $data['access_token'];
+    }
+
+    public function getMetrics()
+    {
+        $response = $this->client->get('/v1/projects/YOUR_PROJECT_ID/fcm/send');
+        $data = json_decode($response->getBody()->getContents(), true);
+
+        return $data;
     }
 }
-
