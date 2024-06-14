@@ -4,6 +4,6 @@
 <a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
 </p>
 
-## About LaravelIntegration service for Databox using Laravel framework.
+## Integration service for Databox using Laravel framework.
 - Google Analytings 4
 - Firebase Cloud Messaging 
